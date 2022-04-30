@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>物联网设备平台</title>
+    <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
+<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+    <style>
+      /*重置基础样式*/
+      html,body{
+        margin: 0;
+        padding: 0;
+        color: #9cb17e;
+        background-color: #e8f3e2;
+      }
+      /*根容器*/
+      .root-container {
+        color: #9cb17e;
+        font-size: 12px;
+        font-family: "微软雅黑","arial";
+        padding: 0;
+        margin: 0;
+        top: 0;
+        bottom: 0;
+        background-position: 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+      /*头部区域*/
+      header {
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      /*头部技术支持区域*/
+      header .header-nav{
+        background-color: #b5d780;
+        color: #fff;
+        padding: 14px;
+        text-align: right;
+        font-size: 13px;
+      }
+
+      /*头部项目名区域*/
+      header .header-banner{
+        background-color:#aec58b;
+        border-color: transparent;
+        height: 150px;
+      }
+
+      /*头部项目名和用户的容器*/
+      header .header-banner .project-user{
+        margin-top: 40px;
+        display: flex;
+        flex-direction: row;
+      }
+
+      /*头部项目名区域*/
+      header .header-banner .project-user .project-div{
+        width: 160px;
+        color:#fff;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        font-weight: bolder;
+        font-size: 22px;
+      }
+
+      /*头部用户区域*/
+      header .header-banner .project-user .login-icon {
+        height: 60px;
+        width: 60px;
+        padding: 13px;
+        border-radius: 50%;
+        font-size: 30px;
+        margin-bottom: 20px;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+        background-color: #b5d780;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+      }
+
+      /*顶部的菜单导航*/
+      header .menu-nav{
+        background-color: #9cb17e;
+      }
+
+      /*顶部的菜单导航选中时的样式*/
+      .menu-top-active {
+        background-color: #aec58b;
+      }
+
+      /*顶部的菜单导航滑过时的样式*/
+      header .menu-nav #menu-top > li > a:hover, .header .menu-nav #menu-top > li > a:focus,.header .menu-nav #menu-top > li > a:visited {
+        background-color: #b5d780
+      }
+
+      /*顶部的菜单导航默认标签样式*/
+      header .menu-nav #menu-top a {
+        color: #FFF;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 10px 10px 10px 10px;
+        text-transform: uppercase;
+      }
+
+      /*主体区域*/
+      section{
+        margin-bottom: 2em;
+        margin-top: 2em;
+        height: auto;
+      }
+
+      /*页面栏目的分割线*/
+      .page-head-line{
+        font-weight: 900;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #9cb17e;
+        text-transform: uppercase;
+        color: #9cb17e;
+        font-size: 20px;
+        margin-bottom: 40px;
+      }
+
+
+      /*底部版权区域*/
+      footer{
+        color: #fff;
+        background-color: #9cb17e;
+        padding: 20px 0;
+        position: fixed;;
+        bottom: 0;
+        width: 100vw;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /*底部版权区域文字*/
+      footer span {
+        float:left;
+        padding-right: 24px;
+        font-size: 13px;
+        font-family: inherit;
+      }
+    </style>
+</head>
+<body>
+<div class="root-container">
+  <!--头部区域-->
+  <header>
+    <div class="header-nav">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <strong>Email:</strong> saya@saya.ac.cn&nbsp;&nbsp; <strong>Support:</strong> 极客印记实验室中心
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-banner">
+      <div class="container">
+        <div class="project-user">
+          <div class="project-div">
+            <div class="text-left">
+              物联网网关 +
+            </div>
+            <div class="text-right">
+              + 控制中心
+            </div>
+          </div>
+          <div style="padding-left: 30px;width:70px;">
+            <i class="fa fa-user login-icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-nav">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="navbar-collapse collapse">
+              <ul id="menu-top" class="nav navbar-nav navbar-right">
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./info.html',1,'设备信息')" target="iframepage" class="menu-top-active">设备信息</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./data.html',2,'数据指标')" target="iframepage">数据指标</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./net.html',3,'网络设置')" target="iframepage">网络设置</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./data.html',4,'数据上报')" target="iframepage">数据上报</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./pwd.html',5,'修改密码')" target="iframepage">修改密码</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h4 class="page-head-line" id="current-menu">设备信息</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <iframe src="./info.html" id="iframepage" name="iframepage" frameBorder = 0 scrolling = no width="100%" onLoad="this.height=100"  ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--无实意，占位的，解决底部区域把上面的元素遮挡了-->
+  <div style="height:100px;"></div>
+  <!--版权区域-->
+  <footer>
+    <div class="container">
+      <p>Copyright © 2016-<script>document.write(new Date().getFullYear())</script> Saya.ac.cn-极客印记 All rights reserved 国家工信部域名备案信息：[<a href="https://beian.miit.gov.cn/" rel="noopener noreferrer" style="color: #fff" target="_blank">saya.ac.cn/蜀ICP备2021013893号</a>]</p>
+      <p>通讯地址：四川省宜宾市五粮液大道东段酒圣路8号(宜宾学院本部) 邮编：644000 Email：saya@saya.ac.cn</p>
+      <p>建议您使用Google Chrome，分辨率1920*1080及以上浏览，获得更好用户体验</p>
+    </div>
+  </footer>
+</div>
+<!--<script src="../idea-resource/js/jquery.min.js"></script>-->
+<!--<script src="../idea-resource/js/bootstrap.min.js"></script>-->
+<script src="./local-resource/js/jquery.min.js"></script>
+<script src="./local-resource/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+  // 定时刷新页面的高度
+  var timer = window.setInterval("reinitIframe()",500)
+
+  // 当前所选中的li序号，默认打开时为第一个
+  let currentLiIndex = 1
+
+  $(function () {
+
+  })
+
+
+  function reinitIframe(){
+      var iframe = document.getElementById("iframepage");
+      try{
+        var bHeight = iframe.contentWindow.document.body.scrollHeight;
+        var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+        var height = Math.max(bHeight, dHeight);
+        iframe.height = height;
+      }catch (ex){}
+  }
+
+  /**
+   * 打开指定的iframe
+   * @param toSrc url地址
+   * @param index 触发点击时，所在的li中的索引位置
+   * @param name 要打开的iframe名字
+   */
+   let goPage = function (toSrc,index,name) {
+      document.getElementById("iframepage").src = toSrc;
+      //
+      // if (currentLiIndex === index){
+      //   return
+      // }
+      console.log(index)
+      console.log($('#menu-top > li:nth-child('+index+')').find('a'))
+      $('#menu-top > li:nth-child('+currentLiIndex+')').find('a').removeClass("menu-top-active");
+      $('#menu-top > li:nth-child('+index+')').find('a').addClass("menu-top-active");
+      currentLiIndex = index
+  }
+
+    logout = function() {
+        if (window.confirm("您确定要退出平台?")) {
+            window.location.href = 'student/logout.html';
+        }
+    }
+</script>
+</body>
+</html>
