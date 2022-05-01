@@ -300,13 +300,13 @@
 <!--<script src="./js/bootstrap.min.js"></script>-->
 <script type="application/javascript">
     $(function () {
-
         $('#go').click(function () {
             var name = $('#name').val().trim();
             var password = $('#password').val().trim();
             if (name === "" || password === "") {
               const $modal = $('#myModal')
-              confirm($modal,'请正确输入账户和密码',test,Date.now());
+              //confirm($modal,'请正确输入账户和密码',test,Date.now());
+              notice($modal,'请正确输入账户和密码');
               return false;
              } else {
                 window.location.href = 'home.html';
@@ -333,32 +333,59 @@
             }
         });
 
-      const confirm = ($modal,noticeVal,callBack,param)=>{
-        $modal.on('show.bs.modal', function () {
-          // 为防止重复执行，在这里需要清除
-          $modal.off('show.bs.modal')
-          $('#global-notice-text').text("请正确输入账户和密码");
-          //绑定回调函数。点击确定将执行此方法
-          $('#modal-confirm').on('click', function () {
-            $('#modal-confirm').off("click");
-            //如果这个参数a是函数，那么就执行这个函数，否则打印a的值
-            if(typeof callBack === "function"){
-              console.log("执行回调:",callBack.name)
-              console.log("参数:",param)
-              callBack(param);
-            }else{
-              console.log('无效的回调，直接打印',callBack)
-            }
-            $('#myModal').modal('hide')
-          });
-        });
-        $modal.modal('show');
-      }
-
       function test(a) {
         console.log('执行',a)
       }
     })
+
+    /**
+     * 打开询问框
+     * @param $modal 模态框dom
+     * @param noticeVal 提示内容
+     * @param callBack 回调函数
+     * @param param 参数
+     */
+    function confirm($modal,noticeVal,callBack,param){
+      $modal.on('show.bs.modal', function () {
+        // 为防止重复执行，在这里需要清除
+        $modal.off('show.bs.modal')
+        $modal.find('#global-notice-text').text(noticeVal);
+        //绑定回调函数。点击确定将执行此方法
+        $modal.find('#modal-confirm').on('click', function () {
+          $modal.find('#modal-confirm').off("click");
+          //如果这个参数a是函数，那么就执行这个函数，否则打印a的值
+          if(typeof callBack === "function"){
+            console.log("执行回调:",callBack.name)
+            console.log("参数:",param)
+            callBack(param);
+          }else{
+            console.log('无效的回调，直接打印',callBack)
+          }
+          $modal.modal('hide')
+        });
+      });
+      $modal.modal('show');
+    }
+
+    /**
+     * 打开提示框
+     * @param $modal 模态框dom
+     * @param noticeVal 提示内容
+     */
+    function notice($modal,noticeVal){
+      $modal.on('show.bs.modal', function () {
+        // 为防止重复执行，在这里需要清除
+        $modal.off('show.bs.modal')
+        $modal.find('#global-notice-text').text(noticeVal);
+        //绑定回调函数。点击确定将执行此方法
+        $modal.find('#modal-confirm').on('click', function () {
+          $modal.find('#modal-confirm').off("click");
+          $modal.modal('hide')
+        });
+      });
+      $modal.modal('show');
+    }
+
 </script>
 </body>
 </html>

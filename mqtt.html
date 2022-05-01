@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>物联网设备平台</title>
+  <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
+<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: #9cb17e;
+      background-color: #e8f3e2;
+    }
+  </style>
+</head>
+<body>
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="alert alert-success">当设备需要进行数据的远程上报和控制时，需要进行连接配置。</div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="col-md-8">
+      <form class="form-horizontal" role="form">
+        <div class="form-group form-check form-switch">
+          <label>服务器</label>
+          <input type="text" class="form-control" placeholder="文本输入">
+        </div>
+        <div class="form-group">
+          <label>端口</label>
+          <input type="text" class="form-control" placeholder="文本输入">
+        </div>
+        <div class="form-group">
+          <label>设备id</label>
+          <input type="text" class="form-control" placeholder="文本输入">
+        </div>
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" class="form-control" placeholder="文本输入">
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <input type="text" class="form-control" placeholder="文本输入">
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-info" style="background-color:#9cb17e;border-color: transparent"><span class="fa fa-check"></span>&nbsp;提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="./local-resource/js/jquery.min.js"></script>
+<script src="./local-resource/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    $(window.parent.document).find(".loader").show();
+    $(window.parent.document).find(".loader").show().delay(3000).hide(0);
+  })
+</script>
+</body>
+</html>

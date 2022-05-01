@@ -7,6 +7,7 @@
     <title>物联网设备平台</title>
     <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
     <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./local-resource/css/loading.css">
 <!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
     <style>
       /*重置基础样式*/
@@ -98,12 +99,12 @@
       }
 
       /*顶部的菜单导航滑过时的样式*/
-      header .menu-nav #menu-top > li > a:hover, .header .menu-nav #menu-top > li > a:focus,.header .menu-nav #menu-top > li > a:visited {
-        background-color: #b5d780
+      header .menu-nav .nav > li > a:hover, header .menu-nav .nav > li > a:focus {
+        background-color: #b5d780  !important
       }
 
       /*顶部的菜单导航默认标签样式*/
-      header .menu-nav #menu-top a {
+      header .menu-nav .nav a {
         color: #FFF;
         text-decoration: none;
         font-weight: 500;
@@ -154,6 +155,46 @@
     </style>
 </head>
 <body>
+<div class='loader' style="display: none">
+  <div class='loader_overlay'></div>
+  <div class='loader_cogs'>
+    <div class='loader_cogs__top'>
+      <div class='top_part'></div>
+      <div class='top_part'></div>
+      <div class='top_part'></div>
+      <div class='top_hole'></div>
+    </div>
+    <div class='loader_cogs__left'>
+      <div class='left_part'></div>
+      <div class='left_part'></div>
+      <div class='left_part'></div>
+      <div class='left_hole'></div>
+    </div>
+    <div class='loader_cogs__bottom'>
+      <div class='bottom_part'></div>
+      <div class='bottom_part'></div>
+      <div class='bottom_part'></div>
+      <div class='bottom_hole'></div>
+    </div>
+    <p>loading...</p>
+  </div>
+</div>
+<!-- 模态框 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div>
+      <div class="modal-body" id="global-notice-text"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="modal-confirm" style="background-color:#9cb17e;border-color:#9cb17e">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="root-container">
   <!--头部区域-->
   <header>
@@ -190,10 +231,11 @@
             <div class="navbar-collapse collapse">
               <ul id="menu-top" class="nav navbar-nav navbar-right">
                 <li><a href="javascript:void(0)" onclick="javascript:goPage('./info.html',1,'设备信息')" target="iframepage" class="menu-top-active">设备信息</a></li>
-                <li><a href="javascript:void(0)" onclick="javascript:goPage('./data.html',2,'数据指标')" target="iframepage">数据指标</a></li>
-                <li><a href="javascript:void(0)" onclick="javascript:goPage('./net.html',3,'网络设置')" target="iframepage">网络设置</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./ap.html',2,'热点设置')" target="iframepage">热点设置</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./sta.html',3,'上网设置')" target="iframepage">上网设置</a></li>
                 <li><a href="javascript:void(0)" onclick="javascript:goPage('./data.html',4,'数据上报')" target="iframepage">数据上报</a></li>
-                <li><a href="javascript:void(0)" onclick="javascript:goPage('./pwd.html',5,'修改密码')" target="iframepage">修改密码</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./mqtt.html',5,'消息队列')" target="iframepage">消息队列</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./pwd.html',6,'修改密码')" target="iframepage">修改密码</a></li>
               </ul>
             </div>
           </div>
@@ -259,23 +301,65 @@
    * @param name 要打开的iframe名字
    */
    let goPage = function (toSrc,index,name) {
+     //console.log(index)
+      if (currentLiIndex === index){
+        return
+      }
       document.getElementById("iframepage").src = toSrc;
-      //
-      // if (currentLiIndex === index){
-      //   return
-      // }
-      console.log(index)
-      console.log($('#menu-top > li:nth-child('+index+')').find('a'))
+      document.getElementById("current-menu").innerText = name;
       $('#menu-top > li:nth-child('+currentLiIndex+')').find('a').removeClass("menu-top-active");
       $('#menu-top > li:nth-child('+index+')').find('a').addClass("menu-top-active");
       currentLiIndex = index
   }
 
-    logout = function() {
-        if (window.confirm("您确定要退出平台?")) {
-            window.location.href = 'student/logout.html';
+  /**
+   * 打开询问框
+   * @param $modal 模态框dom
+   * @param noticeVal 提示内容
+   * @param callBack 回调函数
+   * @param param 参数
+   */
+  function confirm($modal,noticeVal,callBack,param){
+    $modal.on('show.bs.modal', function () {
+      // 为防止重复执行，在这里需要清除
+      $modal.off('show.bs.modal')
+      $modal.find('#global-notice-text').text(noticeVal);
+      //绑定回调函数。点击确定将执行此方法
+      $modal.find('#modal-confirm').on('click', function () {
+        $modal.find('#modal-confirm').off("click");
+        //如果这个参数a是函数，那么就执行这个函数，否则打印a的值
+        if(typeof callBack === "function"){
+          console.log("执行回调:",callBack.name)
+          console.log("参数:",param)
+          callBack(param);
+        }else{
+          console.log('无效的回调，直接打印',callBack)
         }
-    }
+        $modal.modal('hide')
+      });
+    });
+    $modal.modal('show');
+  }
+
+  /**
+   * 打开提示框
+   * @param $modal 模态框dom
+   * @param noticeVal 提示内容
+   */
+  function notice($modal,noticeVal){
+    $modal.on('show.bs.modal', function () {
+      // 为防止重复执行，在这里需要清除
+      $modal.off('show.bs.modal')
+      $modal.find('#global-notice-text').text(noticeVal);
+      //绑定回调函数。点击确定将执行此方法
+      $modal.find('#modal-confirm').on('click', function () {
+        $modal.find('#modal-confirm').off("click");
+        $modal.modal('hide')
+      });
+    });
+    $modal.modal('show');
+  }
+
 </script>
 </body>
 </html>

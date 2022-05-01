@@ -1,46 +1,115 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>物联网设备平台</title>
-    <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>物联网设备平台</title>
+  <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
 <!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: #9cb17e;
+      background-color: #e8f3e2;
+    }
+    .tools-bar{
+      display: flex;
+      flex-direction: row;
+      justify-content:space-between;
+    }
+    /*覆写表格的标题头样式*/
+    caption {
+      color: #9cb17e;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="page-header">
-        <h1>数据指标</h1>
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="alert alert-success tools-bar">
+      <span>当触发一次手动采集数据时，我们已将数据存入到用户本地，本地默认只保存最新20条数据。</span>
+      <span class="fa fa-refresh" title="手动采集" style="cursor:pointer"></span>
     </div>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>名称</th>
-                <th>城市</th>
-                <th>邮编</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Tanmay</td>
-                <td>Bangalore</td>
-                <td>560001</td>
-            </tr>
-            <tr>
-                <td>Sachin</td>
-                <td>Mumbai</td>
-                <td>400003</td>
-            </tr>
-            <tr>
-                <td>Uma</td>
-                <td>Pune</td>
-                <td>411027</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+  </div>
 </div>
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>时间</th>
+            <th>标签</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>2022-05-01 18:34:53</td>
+            <td>
+              <span class="label label-success">latest</span>
+            </td>
+            <td>
+              <span class="fa fa-eye" title="查看" style="cursor:pointer"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>2022-05-01 18:34:52</td>
+            <td>
+              <span class="label label-info">local</span>
+            </td>
+            <td>
+              <span class="fa fa-eye" title="查看" style="cursor:pointer"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>2022-05-01 18:34:51</td>
+            <td>
+              <span class="label label-info">local</span>
+            </td>
+            <td>
+              <span class="fa fa-eye" title="查看" style="cursor:pointer"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>2022-05-01 18:34:50</td>
+            <td>
+              <span class="label label-info">local</span>
+            </td>
+            <td>
+              <span class="fa fa-eye" title="查看" style="cursor:pointer"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>2022-05-01 18:34:49</td>
+            <td>
+              <span class="label label-info">local</span>
+            </td>
+            <td>
+              <span class="fa fa-eye" title="查看" style="cursor:pointer"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script src="./local-resource/js/jquery.min.js"></script>
+<script src="./local-resource/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    $(window.parent.document).find(".loader").show();
+    $(window.parent.document).find(".loader").show().delay(3000).hide(0);
+  })
+</script>
 </body>
 </html>
