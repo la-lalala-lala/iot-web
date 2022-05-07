@@ -303,32 +303,31 @@
         $('#go').click(function () {
             var name = $('#name').val().trim();
             var password = $('#password').val().trim();
+            const $modal = $('#myModal')
             if (name === "" || password === "") {
-              const $modal = $('#myModal')
-              //confirm($modal,'请正确输入账户和密码',test,Date.now());
               notice($modal,'请正确输入账户和密码');
               return false;
              } else {
-                window.location.href = 'home.html';
-                // $('#go').attr("disabled", "disabled");//防止重复提交，此刻禁用
-                // $.ajax({
-                //     type: "POST",
-                //     url: "http://10.203.2.17/login.action",
-                //     data: {'name': name, 'password': password},
-                //     dataType: "json",
-                //     success: function (data) {
-                //         if (data.code == 0) {
-                //             window.location.href = 'home.html';
-                //         } else {
-                //             alert('用户名不存在或密码错误');
-                //         }
-                //     },
-                //     error: function (data) {
-                //         alert('网络发送异常，请稍后再试');
-                //         return false;
-                //     }
-                // });
-                // $('#go').removeAttr("disabled");//恢复使用
+                $('.loader').show();
+                $.ajax({
+                    type: "POST",
+                    url: "http://10.203.2.27/login.action",
+                    data: {'name': name, 'password': password},
+                    dataType: "json",
+                    success: function (data) {
+                        $(".loader").show().delay(500).hide(0);
+                        if (data.code == 0) {
+                            window.location.href = 'home.html';
+                        } else {
+                            notice($modal,'用户名不存在或密码错误');
+                        }
+                    },
+                    error: function (data) {
+                        $(".loader").show().delay(3000).hide(0);
+                        notice($modal,'网络发送异常，请稍后再试');
+                        return false;
+                    }
+                });
                 return false;
             }
         });
