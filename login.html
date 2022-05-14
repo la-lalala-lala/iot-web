@@ -316,7 +316,7 @@
                     dataType: "json",
                     success: function (data) {
                         $(".loader").show().delay(500).hide(0);
-                        if (data.code == 0) {
+                        if (data.code === 0) {
                             window.location.href = 'home.html';
                         } else {
                             notice($modal,'用户名不存在或密码错误');

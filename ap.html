@@ -7,7 +7,7 @@
     <title>物联网设备平台</title>
     <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
     <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
-<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="./css/bootstrap.min.css">-->
   <style>
     html, body {
       margin: 0;
@@ -41,27 +41,27 @@
         <tbody>
         <tr>
           <td class="text-right">主机IP:</td>
-          <td>10.203.2.17</td>
+          <td id="softAPIP"></td>
           <td class="text-right">主机IPv6:</td>
-          <td>ac:2e:a2:4f:5c:e2</td>
+          <td id="softAPIPv6"></td>
         </tr>
         <tr>
           <td class="text-right">主机SSID:</td>
-          <td>10.203.2.1</td>
+          <td id="SSID"></td>
           <td class="text-right">主机广播IP:</td>
-          <td>10.203.2.1</td>
+          <td id="softAPBroadcastIP"></td>
         </tr>
         <tr>
           <td class="text-right">主机物理地址:</td>
-          <td>3</td>
+          <td id="softAPmacAddress"></td>
           <td class="text-right">主机网络ID:</td>
-          <td>3</td>
+          <td id="softAPNetworkID"></td>
         </tr>
         <tr>
           <td class="text-right">已连接个数:</td>
-          <td>4</td>
+          <td id="softAPgetStationNum"></td>
           <td class="text-right">主机名:</td>
-          <td>3</td>
+          <td id="softAPgetHostname"></td>
         </tr>
         </tbody>
       </table>
@@ -73,14 +73,14 @@
         <form class="form-horizontal" role="form">
           <div class="form-group">
             <label>热点名称</label>
-            <input type="text" maxlength="16" minlength="4" class="form-control" placeholder="文本输入">
+            <input type="text" id="ap_ssid" maxlength="16" minlength="4" class="form-control" placeholder="文本输入">
           </div>
           <div class="form-group">
             <label>热点密码</label>
-            <input type="text" maxlength="16" minlength="8" class="form-control" placeholder="文本输入">
+            <input type="text" id="ap_password" maxlength="16" minlength="8" class="form-control" placeholder="文本输入">
           </div>
           <div class="form-group">
-            <button type="button" class="btn btn-info" style="background-color:#9cb17e;border-color: transparent"><span class="fa fa-check"></span>&nbsp;提交</button>
+            <button type="button" onclick="submitData()" class="btn btn-info" style="background-color:#9cb17e;border-color: transparent"><span class="fa fa-check"></span>&nbsp;提交</button>
           </div>
         </form>
       </div>
@@ -90,9 +90,100 @@
   <script src="./local-resource/js/bootstrap.min.js"></script>
   <script type="text/javascript">
     $(function () {
-      $(window.parent.document).find(".loader").show();
-      $(window.parent.document).find(".loader").show().delay(3000).hide(0);
+      getData()
     })
+
+    function getData() {
+      const $modal = $(window.parent.document).find('#myModal')
+      $(window.parent.document).find(".loader").show();
+      $.ajax({
+        type: "GET",
+        url: "http://10.203.2.27/ap.action",
+        dataType: "json",
+        success: function (data) {
+          $(window.parent.document).find(".loader").hide();
+          console.log(data)
+          if (data.code === 0) {
+            // 渲染数据
+            $("#softAPBroadcastIP").text(data.data.softAPBroadcastIP);
+            $("#softAPgetHostname").text(data.data.softAPgetHostname);
+            $("#softAPgetStationNum").text(data.data.softAPgetStationNum);
+            $("#softAPNetworkID").text(data.data.softAPNetworkID);
+            $("#softAPmacAddress").text(data.data.softAPmacAddress);
+            $("#SSID").text(data.data.SSID);
+            $("#softAPIPv6").text(data.data.softAPIPv6);
+            $("#softAPIP").text(data.data.softAPIP);
+            $("#ap_ssid").val(data.data.ap_ssid);
+            $("#ap_password").val(data.data.ap_password);
+          } else {
+            window.parent.notice($modal,'');
+          }
+        },
+        error: function (data) {
+          $(window.parent.document).find(".loader").show().hide();
+          window.parent.notice($modal,'网络发送异常，请稍后再试');
+          return false;
+        }
+      });
+    }
+
+    function submitData() {
+      const flag = checkData();
+      if (!flag) {
+        return
+      }
+      const ap_ssid = $("#ap_ssid").val().trim();
+      const ap_password = $("#ap_password").val().trim();
+      // 提交数据
+      const $modal = $(window.parent.document).find('#myModal')
+      $(window.parent.document).find(".loader").show();
+      $.ajax({
+        type: "POST",
+        url: "http://10.203.2.27/ap.action",
+        dataType: "json",
+        data: {
+          ssid: ap_ssid,
+          password: ap_password
+        },
+        success: function (data) {
+          $(window.parent.document).find(".loader").hide();
+          console.log(data)
+          if (data.code === 0) {
+            window.parent.notice($modal,'修改成功');
+          } else {
+            window.parent.notice($modal,'修改失败');
+          }
+        },
+        error: function (data) {
+          $(window.parent.document).find(".loader").show().hide();
+          window.parent.notice($modal,'网络发送异常，请稍后再试');
+        }
+      });
+    }
+
+    function checkData() {
+      // 对ap_ssid，ap_password进行非空，长度校验
+      const $modal = $(window.parent.document).find('#myModal')
+      const ap_ssid = $("#ap_ssid").val().trim();
+      const ap_password = $("#ap_password").val().trim();
+      if (ap_ssid === '') {
+        window.parent.notice($modal,'请输入热点名称');
+        return false;
+      }
+      if (ap_password === '') {
+        window.parent.notice($modal,'请输入热点密码');
+        return false;
+      }
+      if (ap_ssid.length < 4 || ap_ssid.length > 16) {
+        window.parent.notice($modal,'热点名称长度必须在4-16之间');
+        return false;
+      }
+      if (ap_password.length < 8 || ap_password.length > 16) {
+        window.parent.notice($modal,'热点密码长度必须在8-16之间');
+        return false;
+      }
+      return true;
+    }
   </script>
 </body>
 </html>

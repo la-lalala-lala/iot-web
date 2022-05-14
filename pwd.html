@@ -45,9 +45,34 @@
 <script src="./local-resource/js/jquery.min.js"></script>
 <script src="./local-resource/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+  function sendData(password) {
+    // 提交数据
+    const $modal = $(window.parent.document).find('#myModal')
+    $(window.parent.document).find(".loader").show();
+    $.ajax({
+      type: "POST",
+      url: "http://10.203.2.27/password.action",
+      dataType: "json",
+      data: {
+        password: password
+      },
+      success: function (data) {
+        $(window.parent.document).find(".loader").hide();
+        console.log(data)
+        if (data.code === 0) {
+          window.parent.notice($modal,'修改成功');
+        } else {
+          window.parent.notice($modal,'修改失败');
+        }
+      },
+      error: function (data) {
+        $(window.parent.document).find(".loader").show().hide();
+        window.parent.notice($modal,'网络发送异常，请稍后再试');
+      }
+    });
+  }
+
   $(function () {
-    // $(window.parent.document).find(".loader").show();
-    // $(window.parent.document).find(".loader").show().delay(3000).hide(0);
     $("#submit").on('click',function () {
       // 获取密码
       var password1 = $("#password1").val().trim();
@@ -62,7 +87,7 @@
         window.parent.notice($(window.parent.document).find("#myModal"), "两次密码不一致！");
         return;
       }
-      console.log("发起提交~",password2)
+      sendData(password2);
     });
   })
 </script>

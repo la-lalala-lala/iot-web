@@ -41,27 +41,27 @@
         <tbody>
         <tr>
           <td class="text-right">本地IP:</td>
-          <td>10.203.2.17</td>
+          <td id="localIP"></td>
           <td class="text-right">本地IPv6:</td>
-          <td>ac:2e:a2:4f:5c:e2</td>
+          <td id="localIPv6"></td>
         </tr>
         <tr>
           <td class="text-right">网关:</td>
-          <td>10.203.2.1</td>
+          <td id="gatewayIP"></td>
           <td class="text-right">DNS:</td>
-          <td>10.203.2.1</td>
+          <td id="dnsIP"></td>
         </tr>
         <tr>
           <td class="text-right">物理地址:</td>
-          <td>3</td>
+          <td id="macAddress"></td>
           <td class="text-right">网络ID:</td>
-          <td>3</td>
+          <td id="networkID"></td>
         </tr>
         <tr>
           <td class="text-right">连接状态:</td>
-          <td>已连接</td>
+          <td id="connect_router_flag"></td>
           <td class="text-right">主机名:</td>
-          <td>3</td>
+          <td id="getHostname"></td>
         </tr>
         </tbody>
       </table>
@@ -73,14 +73,14 @@
         <form class="form-horizontal" role="form">
           <div class="form-group">
             <label>Wifi名称</label>
-            <input type="text" maxlength="16" minlength="4" class="form-control" placeholder="文本输入">
+            <input type="text" id="sta_ssid" maxlength="16" minlength="4" class="form-control" placeholder="文本输入">
           </div>
           <div class="form-group">
             <label>Wifi密码</label>
-            <input type="text" maxlength="16" minlength="8" class="form-control" placeholder="文本输入">
+            <input type="text" id="sta_password" maxlength="16" minlength="8" class="form-control" placeholder="文本输入">
           </div>
           <div class="form-group">
-            <button type="button" class="btn btn-info" style="background-color:#9cb17e;border-color: transparent"><span class="fa fa-check"></span>&nbsp;提交</button>
+            <button type="button" onclick="submitData()" class="btn btn-info" style="background-color:#9cb17e;border-color: transparent"><span class="fa fa-check"></span>&nbsp;提交</button>
           </div>
         </form>
       </div>
@@ -90,9 +90,100 @@
 <script src="./local-resource/js/bootstrap.min.js"></script>
 <script type="text/javascript">
   $(function () {
-    $(window.parent.document).find(".loader").show();
-    $(window.parent.document).find(".loader").show().delay(3000).hide(0);
+    getData()
   })
+
+  function getData() {
+    const $modal = $(window.parent.document).find('#myModal')
+    $(window.parent.document).find(".loader").show();
+    $.ajax({
+      type: "GET",
+      url: "http://10.203.2.27/sta.action",
+      dataType: "json",
+      success: function (data) {
+        $(window.parent.document).find(".loader").hide();
+        console.log(data)
+        if (data.code === 0) {
+          // 渲染数据
+          $("#localIP").text(data.data.localIP);
+          $("#localIPv6").text(data.data.localIPv6);
+          $("#gatewayIP").text(data.data.gatewayIP);
+          $("#dnsIP").text(data.data.dnsIP);
+          $("#macAddress").text(data.data.macAddress);
+          $("#networkID").text(data.data.networkID);
+          $("#connect_router_flag").text(data.data.connect_router_flag);
+          $("#getHostname").text(data.data.getHostname);
+          $("#sta_ssid").val(data.data.sta_ssid);
+          $("#sta_password").val(data.data.sta_password);
+        } else {
+          window.parent.notice($modal,'获取数据失败，请稍后重试！')
+        }
+      },
+      error: function (data) {
+        $(window.parent.document).find(".loader").show().hide();
+        window.parent.notice($modal,'网络发送异常，请稍后再试');
+        return false;
+      }
+    });
+  }
+
+  function submitData() {
+    const flag = checkData();
+    if (!flag) {
+      return
+    }
+    const sta_ssid = $("#sta_ssid").val().trim();
+    const sta_password = $("#sta_password").val().trim();
+    // 提交数据
+    const $modal = $(window.parent.document).find('#myModal')
+    $(window.parent.document).find(".loader").show();
+    $.ajax({
+      type: "POST",
+      url: "http://10.203.2.27/ap.action",
+      dataType: "json",
+      data: {
+        ssid: sta_ssid,
+        password: sta_password
+      },
+      success: function (data) {
+        $(window.parent.document).find(".loader").hide();
+        console.log(data)
+        if (data.code === 0) {
+          window.parent.notice($modal,'修改成功');
+        } else {
+          window.parent.notice($modal,'修改失败');
+        }
+      },
+      error: function (data) {
+        $(window.parent.document).find(".loader").show().hide();
+        window.parent.notice($modal,'网络发送异常，请稍后再试');
+      }
+    });
+  }
+
+  function checkData() {
+    // 对ap_ssid，ap_password进行非空，长度校验
+    const $modal = $(window.parent.document).find('#myModal')
+    const sta_ssid = $("#sta_ssid").val().trim();
+    const sta_password = $("#sta_password").val().trim();
+    if (sta_ssid === '') {
+      window.parent.notice($modal,'请输入Wifi名称');
+      return false;
+    }
+    if (sta_password === '') {
+      window.parent.notice($modal,'请输入Wifi密码');
+      return false;
+    }
+    if (sta_ssid.length < 4 || sta_ssid.length > 16) {
+      window.parent.notice($modal,'Wifi名称长度必须在4-16之间');
+      return false;
+    }
+    if (sta_password.length < 8 || sta_password.length > 16) {
+      window.parent.notice($modal,'Wifi密码长度必须在8-16之间');
+      return false;
+    }
+    return true;
+  }
 </script>
 </body>
 </html>
