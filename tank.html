@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设备控制面板</title>
+  <style>
+      .html,body{
+          padding: 0;
+          margin: 0;
+      }
+      /*最外层盒子样式*/
+      .container{
+          min-height: fill-available;
+          min-height: -webkit-fill-available;
+          height: 100vh;
+          min-width: fill-available;
+          min-width: -webkit-fill-available;
+          width: 100vw;
+          display: -webkit-flex; /* Safari */
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 0;
+          box-sizing: border-box;
+          color: #323233;
+          font-size: 26rpx;
+          background-color: #0b1530;
+          color: #fff;
+      }
+
+
+      /*控制中心区域开始*/
+      /*控制中心区域盒子样式*/
+      .container .operation-view{
+          width: -webkit-fill-available;
+          height: 70vh;
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+      }
+
+      /* 上部控制面板盒子 */
+      .container .operation-view .operation-top{
+          flex: 1;
+          width: fill-available;
+          width: -webkit-fill-available;
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-start;
+      }
+
+      /* 方向操作样式 */
+      .container .operation-view .operation-top .operation-direction{
+          height: 100%;
+          width: 35%;
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+      }
+
+      /* 方向按键组合 */
+      .container .operation-view .operation-top .operation-direction .operation-direction-group{
+          width: 40vh;
+          height: 40vh;
+      }
+
+      /* 手柄按键通用样式开始 */
+      .container .operation-view .operation-top .pie{
+          position: relative;
+          margin: 1em auto;
+          padding: 0;
+          border-radius: 50%;
+          list-style: none;
+          overflow: hidden;
+      }
+
+      .container .operation-view .operation-top .slice {
+          overflow: hidden;
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 50%;
+          height: 50%;
+          transform-origin: 0% 100%;
+      }
+
+      .container .operation-view .operation-top .slice-one {
+          transform: rotate(45deg) skewY(0deg);
+      }
+
+      .container .operation-view .operation-top .slice-two {
+          transform: rotate(135deg) skewY(-0deg);
+      }
+
+      .container .operation-view .operation-top .slice-three {
+          transform: rotate(225deg) skewY(0deg);
+      }
+
+      .container .operation-view .operation-top .slice-four {
+          transform: rotate(315deg) skewY(0deg);
+      }
+
+      .container .operation-view .operation-top .slice-color-style1{
+          background-color: #065aab;
+      }
+
+      .container .operation-view .operation-top .slice-color-style2{
+          background-color: #096eab;
+      }
+      /* 手柄按键通用样式结束 */
+
+
+      /* 仪表盘区域 */
+      .container .operation-view .operation-top .operation-info{
+          height: 100%;
+          flex: 1;
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+      }
+
+      /* 仪表盘区域组合 */
+      .container .operation-view .operation-top .operation-info .operation-info-group{
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          font-size: 0.8rem;
+          width: fit-content;
+      }
+
+      .container .operation-view .operation-top .operation-info .operation-info-group .project-name{
+          margin-top: 1.1rem;
+          font-size: 1.8rem;
+      }
+
+      /* 档位操作区域 */
+      .container .operation-view .operation-top .operation-gear{
+          height: 100%;
+          width: 35%;
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+      }
+      /* 档位按键组合 */
+      .container .operation-view .operation-top .operation-gear .operation-gear-group{
+          width: 40vh;
+          height: 40vh;
+      }
+
+      /* 底部控制面板区域 */
+      .container .operation-view .operation-bottom{
+          width: fill-available;
+          width: -webkit-fill-available;
+          height: fit-content;
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-start;
+          font-size: 0.8rem;
+          padding: 1rem;
+      }
+
+      /*单个控制组件容器*/
+      .container .operation-view .operation-bottom .ctrl-item{
+          width: 10rem;
+          height: 2rem;
+          padding-right: 1rem;
+          display: flex;
+          align-items: center;
+          flex-direction: row;
+          justify-content: space-between;
+      }
+
+      /*单个控制组件标题*/
+      .container .operation-view .operation-bottom .ctrl-item .ctrl-item-label{
+          font-size: 1rem;
+          font-weight: bold;
+      }
+
+      /*单个控制组件*/
+      .container .operation-view .operation-bottom .ctrl-item .ctrl-item-element{
+          display: flex;
+          align-items: center;
+          align-content: center;
+      }
+
+      /*控制中心区域结束*/
+
+      /*看板区域*/
+      .container .board-view{
+          flex: 1;
+          width: -webkit-fill-available;
+          display: -webkit-flex;
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+          justify-content:space-between;
+          font-size: 0.8rem;
+          padding: 1rem;
+      }
+
+      /*看板表格*/
+      .container .board-view table{
+          border-collapse:collapse;
+          border:solid 1px Black;
+          text-align: center;
+      }
+
+      /*表格的边框等样式*/
+      .container .board-view table td{
+          width: 8rem;
+          height: 2rem;
+          border: solid 1px Black;
+          padding: 0.4rem;
+      }
+
+      /*正常的表格字体*/
+      .container .board-view table tr{
+          font-weight: bold;
+          background-color: #163c87;
+      }
+
+      /*表格标题行样式*/
+      .container .board-view .label{
+          background-color: #142964;
+          font-weight: lighter;
+      }
+
+      /*公共的switch按钮样式开始*/
+      .switch-button{
+          display: none;/*隐藏表单元素*/
+      }
+      .switch-button+label{/*+选择器选择紧跟“+”左边选择器的第一个元素*/
+          display: inline-block;
+          position: relative;
+          transition: all .3s;
+          width: 3.5rem;
+          height: 1.5rem;
+          border: 1px solid #999;
+          border-radius: 0.75rem;
+          background-color: #ccc;
+      }
+      .switch-button:checked+label{/*选中表单后的样式，:checked表示checkbox被选中后的状态*/
+          background-color: #0184d5;
+      }
+      .switch-button+label::before{/*使用伪元素生成一个按钮*/
+          content: '';
+          display: block;
+          height: 1.5rem;
+          width: 1.5rem;
+          position: absolute;
+          border-radius: 0.75rem;
+          left: 0;
+          top: 0;
+          background-color: #fff;
+          box-shadow: 0 1px 3px rgb(0 0 0/40%);
+          transition: all .3s;
+      }
+      .switch-button:checked+label::before{/*checkbox选中时按钮的样式*/
+          left: 2rem;
+          transition:  all .2s linear;
+      }
+      /*公共的switch按钮样式结束*/
+  </style>
+</head>
+<body>
+<!--最外层盒子开始-->
+<div class="container">
+    <!-- 控制中心开始 -->
+    <div class="operation-view">
+        <!-- 上部控制面板开始 -->
+        <div class="operation-top">
+            <!-- 方向操作开始 -->
+            <view class="operation-direction">
+                <!-- 方向按键组合开始 -->
+                <ul class="operation-direction-group pie">
+                    <li class="slice-one slice slice-color-style1"/>
+                    <li class="slice-two slice slice-color-style2"/>
+                    <li class="slice-three slice slice-color-style1"/>
+                    <li class="slice-four slice slice-color-style2"/>
+                </ul>
+                <!-- 方向按键组合结束 -->
+            </view>
+            <!-- 方向操作结束 -->
+
+            <!-- 仪表盘开始 -->
+            <div class="operation-info">
+                <div class="operation-info-group">
+                    <div class="project-name">
+                        设备控制面板
+                    </div>
+                </div>
+            </div>
+            <!-- 仪表盘结束 -->
+
+            <!-- 档位操作开始 -->
+            <view class="operation-gear">
+                <!-- 档位按键组合开始 -->
+                <ul class="operation-gear-group pie">
+                    <li class="slice-one slice slice-color-style2"/>
+                    <li class="slice-two slice slice-color-style1"/>
+                    <li class="slice-three slice slice-color-style2"/>
+                    <li class="slice-four slice slice-color-style1"/>
+                </ul>
+                <!-- 档位按键组合结束 -->
+            </view>
+            <!-- 档位操作结束 -->
+        </div>
+        <!-- 上部控制面板结束 -->
+
+        <!-- 底部控制面板开始 -->
+        <div class="operation-bottom">
+            <div class="ctrl-item">
+                <span class="ctrl-item-label">启动:</span>
+                <div class="ctrl-item-element">
+                    <input type="checkbox" class="switch-button" id="power-switch" onclick="handleClick(this)">
+                    <label for="power-switch"></label>
+                </div>
+            </div>
+            <div class="ctrl-item">
+                <span class="ctrl-item-label">灯光:</span>
+                <div class="ctrl-item-element">
+                    <input type="checkbox" class="switch-button" id="light-switch" onclick="handleClick(this)">
+                    <label for="light-switch"></label>
+                </div>
+            </div>
+        </div>
+        <!-- 底部控制面板结束 -->
+
+    </div>
+    <!-- 控制中心结束 -->
+
+    <!-- 看板区域开始 -->
+    <div class="board-view">
+        <table>
+            <tr class="label">
+                <td>通信状态</td>
+                <td>启动状态</td>
+                <td>心跳时间(振荡)</td>
+                <td>总电压(V)</td>
+                <td>总电流(mA)</td>
+                <td>环境温度(℃)</td>
+                <td>大气压强(Pa)</td>
+                <td>PM2.5</td>
+            </tr>
+            <tr>
+                <td>已断开</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        </table>
+    </div>
+    <!-- 看板区域结束 -->
+</div>
+<!--最外层盒子结束-->
+</body>
+<script type="application/javascript">
+    function handleClick(e){
+        console.log(e.checked);
+    }
+</script>
+</html>
