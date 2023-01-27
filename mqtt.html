@@ -5,9 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>物联网设备平台</title>
-  <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
-  <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
-<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
   <style>
     html, body {
       margin: 0;
@@ -52,9 +51,10 @@
     </div>
   </div>
 </div>
-<script src="./local-resource/js/jquery.min.js"></script>
-<script src="./local-resource/js/bootstrap.min.js"></script>
-<script type="text/javascript">
+<script src="./js/jquery.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script type="module">
+  import {get_mqtt_request,set_mqtt_request} from './js/config.js'
   $(function () {
     getData()
   })
@@ -62,35 +62,30 @@
   function getData() {
     const $modal = $(window.parent.document).find('#myModal')
     $(window.parent.document).find(".loader").show();
-    $.ajax({
-      type: "GET",
-      url: "http://10.203.2.27/mqtt.action",
-      dataType: "json",
-      success: function (data) {
-        $(window.parent.document).find(".loader").hide();
-        console.log(data)
-        if (data.code === 0) {
-          // 渲染数据
-          $("#host").val(data.data.host);
-          $("#port").val(data.data.port);
-          const status = data.data.status;
-          if("1" === status){
-            $("#status").prop("checked",true)
-          }
-          const flag = data.data.flag;
-          if("1" === flag){
-            $("#flag").prop("checked",true)
-          }
-        } else {
-          window.parent.notice($modal,'');
+    get_mqtt_request().then(data=>{
+      $(window.parent.document).find(".loader").hide();
+      console.log(data)
+      if (data.code === 0) {
+        // 渲染数据
+        $("#host").val(data.data.host);
+        $("#port").val(data.data.port);
+        const status = data.data.status;
+        if("1" === status){
+          $("#status").prop("checked",true)
         }
-      },
-      error: function (data) {
-        $(window.parent.document).find(".loader").show().hide();
-        window.parent.notice($modal,'网络发送异常，请稍后再试');
-        return false;
+        const flag = data.data.flag;
+        if("1" === flag){
+          $("#flag").prop("checked",true)
+        }
+      } else {
+        window.parent.notice($modal,'');
       }
-    });
+    }).catch(error=>{
+      $(window.parent.document).find(".loader").show().hide();
+      window.parent.notice($modal,'网络发送异常，请稍后再试');
+      console.log('获取mqtt数据异常:',error);
+      return false;
+    })
   }
 
   function submitData() {
@@ -104,29 +99,20 @@
     // 提交数据
     const $modal = $(window.parent.document).find('#myModal')
     $(window.parent.document).find(".loader").show();
-    $.ajax({
-      type: "POST",
-      url: "http://10.203.2.27/mqtt.action",
-      dataType: "json",
-      data: {
-        flag: true===mqttFlag?1:0,
-        port: port,
-        host: host
-      },
-      success: function (data) {
-        $(window.parent.document).find(".loader").hide();
-        console.log(data)
-        if (data.code === 0) {
-          window.parent.notice($modal,'修改成功');
-        } else {
-          window.parent.notice($modal,'修改失败');
-        }
-      },
-      error: function (data) {
-        $(window.parent.document).find(".loader").show().hide();
-        window.parent.notice($modal,'网络发送异常，请稍后再试');
+    set_mqtt_request({flag: true===mqttFlag?1:0, port: port, host: host}).then(data=>{
+      $(window.parent.document).find(".loader").hide();
+      console.log(data)
+      if (data.code === 0) {
+        window.parent.notice($modal,'修改成功');
+      } else {
+        window.parent.notice($modal,'修改失败');
       }
-    });
+    }).catch(error=>{
+      $(window.parent.document).find(".loader").show().hide();
+      window.parent.notice($modal,'网络发送异常，请稍后再试');
+      console.log('设置mqtt异常:',error);
+      return false;
+    })
   }
 
   function checkData() {

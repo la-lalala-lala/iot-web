@@ -5,9 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>物联网设备平台</title>
-  <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
-  <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
-<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
   <style>
     html, body {
       margin: 0;
@@ -53,9 +52,10 @@
     </div>
   </div>
 </div>
-<script src="./local-resource/js/jquery.min.js"></script>
-<script src="./local-resource/js/bootstrap.min.js"></script>
-<script type="text/javascript">
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="module">
+  import {get_collect_request} from './js/config.js'
 
   const storageUtil = {
     //存储
@@ -90,41 +90,36 @@
   function getData() {
     const $modal = $(window.parent.document).find('#myModal')
     $(window.parent.document).find(".loader").show();
-    $.ajax({
-      type: "GET",
-      url: "http://10.203.2.27/collect.action",
-      dataType: "json",
-      success: function (data) {
-        $(window.parent.document).find(".loader").hide();
-        console.log(data)
-        if (data.code === 0) {
-          var collect = storageUtil.get("collect");
-          // 为time属性写入当前时间
-          data.data.time = new Date().toLocaleString();
-          if (collect === null) {
-            collect = []
-            collect.push(data.data)
-            storageUtil.set("collect", collect)
-          }else{
-            // 如果本地有数据，则将新数据插入到本地数据的前面
-            collect.unshift(data.data)
-            // 如果本地数据超过20条，则删除最后一条
-            if (collect.length > 20) {
-              collect.pop()
-            }
-            storageUtil.set("collect", collect)
+    get_collect_request().then(data=>{
+      $(window.parent.document).find(".loader").hide();
+      console.log(data)
+      if (data.code === 0) {
+        var collect = storageUtil.get("collect");
+        // 为time属性写入当前时间
+        data.data.time = new Date().toLocaleString();
+        if (collect === null) {
+          collect = []
+          collect.push(data.data)
+          storageUtil.set("collect", collect)
+        }else{
+          // 如果本地有数据，则将新数据插入到本地数据的前面
+          collect.unshift(data.data)
+          // 如果本地数据超过20条，则删除最后一条
+          if (collect.length > 20) {
+            collect.pop()
           }
-          showData(collect)
-        } else {
-          window.parent.notice($modal,'');
+          storageUtil.set("collect", collect)
         }
-      },
-      error: function (data) {
-        $(window.parent.document).find(".loader").show().hide();
-        window.parent.notice($modal,'网络发送异常，请稍后再试');
-        return false;
+        showData(collect)
+      } else {
+        window.parent.notice($modal,'');
       }
-    });
+    }).catch(error=>{
+      $(window.parent.document).find(".loader").show().hide();
+      window.parent.notice($modal,'网络发送异常，请稍后再试');
+      console.log('获取采集数据异常:',error);
+      return false;
+    })
   }
 
 

@@ -5,9 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>物联网设备平台</title>
-  <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
-  <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
-<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
   <style>
     html, body {
       margin: 0;
@@ -58,67 +57,56 @@
     </div>
   </div>
 </div>
-<script src="./local-resource/js/jquery.min.js"></script>
-<script src="./local-resource/js/bootstrap.min.js"></script>
-<script type="text/javascript">
+<script src="./js/jquery.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script type="module">
+  import {set_led_request,get_led_request} from './js/config.js'
 
   function switchLed(status) {
     // 提交数据
     const $modal = $(window.parent.document).find('#myModal')
     $(window.parent.document).find(".loader").show();
-    $.ajax({
-      type: "POST",
-      url: "http://10.203.2.27/led.action",
-      dataType: "json",
-      data: {
-        status: status
-      },
-      success: function (data) {
-        $(window.parent.document).find(".loader").hide();
-        console.log(data)
-        if (data.code === 0) {
-          if ('1' === status){
-            $('#led-ctrl').addClass('led-no');
-          }else{
-            $('#led-ctrl').removeClass('led-no');
-          }
-        } else {
-          window.parent.notice($modal,'修改失败');
+    set_led_request({status: status}).then(data=>{
+      $(window.parent.document).find(".loader").hide();
+      console.log(data)
+      if (data.code === 0) {
+        if ('1' === status){
+          $('#led-ctrl').addClass('led-no');
+        }else{
+          $('#led-ctrl').removeClass('led-no');
         }
-      },
-      error: function (data) {
-        $(window.parent.document).find(".loader").show().hide();
-        window.parent.notice($modal,'网络发送异常，请稍后再试');
+      } else {
+        window.parent.notice($modal,'修改失败');
       }
-    });
+    }).catch(error=>{
+      $(window.parent.document).find(".loader").show().hide();
+      window.parent.notice($modal,'网络发送异常，请稍后再试');
+      console.log('设置led异常:',error);
+      return false;
+    })
   }
 
   function getData() {
     const $modal = $(window.parent.document).find('#myModal')
     $(window.parent.document).find(".loader").show();
-    $.ajax({
-      type: "GET",
-      url: "http://10.203.2.27/led.action",
-      dataType: "json",
-      success: function (data) {
-        $(window.parent.document).find(".loader").hide();
-        console.log(data)
-        if (data.code === 0) {
-          if ('1' === data.data){
-            $('#led-ctrl').addClass('led-no');
-          }else{
-            $('#led-ctrl').removeClass('led-no');
-          }
-        } else {
-          window.parent.notice($modal,'获取数据失败，请稍后重试！')
+    get_led_request().then(data=>{
+      $(window.parent.document).find(".loader").hide();
+      console.log(data)
+      if (data.code === 0) {
+        if ('1' === data.data){
+          $('#led-ctrl').addClass('led-no');
+        }else{
+          $('#led-ctrl').removeClass('led-no');
         }
-      },
-      error: function (data) {
-        $(window.parent.document).find(".loader").show().hide();
-        window.parent.notice($modal,'网络发送异常，请稍后再试');
-        return false;
+      } else {
+        window.parent.notice($modal,'获取数据失败，请稍后重试！')
       }
-    });
+    }).catch(error=>{
+      $(window.parent.document).find(".loader").show().hide();
+      window.parent.notice($modal,'网络发送异常，请稍后再试');
+      console.log('获取led状态异常:',error);
+      return false;
+    })
   }
 
   $(function () {

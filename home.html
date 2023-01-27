@@ -5,10 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>物联网设备平台</title>
-    <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./local-resource/css/loading.css">
-<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/loading.css">
     <style>
       /*重置基础样式*/
       html,body{
@@ -236,10 +235,10 @@
                 <li><a href="javascript:void(0)" onclick="javascript:goPage('./info.html',1,'设备信息')" target="iframepage" class="menu-top-active">设备信息</a></li>
                 <li><a href="javascript:void(0)" onclick="javascript:goPage('./ap.html',2,'热点设置')" target="iframepage">热点设置</a></li>
                 <li><a href="javascript:void(0)" onclick="javascript:goPage('./sta.html',3,'上网设置')" target="iframepage">上网设置</a></li>
-                <li><a href="javascript:void(0)" onclick="javascript:goPage('./data.html',4,'数据上报')" target="iframepage">数据上报</a></li>
-                <li><a href="javascript:void(0)" onclick="javascript:goPage('./mqtt.html',5,'消息队列')" target="iframepage">消息队列</a></li>
-                <li><a href="javascript:void(0)" onclick="javascript:goPage('./led.html',6,'远程控制')" target="iframepage">远程控制</a></li>
-                <li><a href="javascript:void(0)" onclick="javascript:goPage('./pwd.html',7,'修改密码')" target="iframepage">修改密码</a></li>
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./mqtt.html',4,'消息队列')" target="iframepage">消息队列</a></li>
+<!--                <li><a href="javascript:void(0)" onclick="javascript:goPage('./led.html',6,'远程控制')" target="iframepage">远程控制</a></li>-->
+<!--                <li><a href="javascript:void(0)" onclick="javascript:goPage('./data.html',4,'数据上报')" target="iframepage">数据上报</a></li>-->
+                <li><a href="javascript:void(0)" onclick="javascript:goPage('./pwd.html',5,'修改密码')" target="iframepage">修改密码</a></li>
               </ul>
             </div>
           </div>
@@ -272,21 +271,14 @@
     </div>
   </footer>
 </div>
-<!--<script src="../idea-resource/js/jquery.min.js"></script>-->
-<!--<script src="../idea-resource/js/bootstrap.min.js"></script>-->
-<script src="./local-resource/js/jquery.min.js"></script>
-<script src="./local-resource/js/bootstrap.min.js"></script>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
 <script type="text/javascript">
   // 定时刷新页面的高度
-  var timer = window.setInterval("reinitIframe()",500)
+  const timer = window.setInterval("reinitIframe()", 500);
 
   // 当前所选中的li序号，默认打开时为第一个
   let currentLiIndex = 1
-
-  $(function () {
-
-  })
-
 
   function reinitIframe(){
       var iframe = document.getElementById("iframepage");
@@ -305,7 +297,8 @@
    * @param name 要打开的iframe名字
    */
    let goPage = function (toSrc,index,name) {
-     //console.log(index)
+     console.log('currentLiIndex',currentLiIndex)
+    console.log('index',index)
       if (currentLiIndex === index){
         return
       }

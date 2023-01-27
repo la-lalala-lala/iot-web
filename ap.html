@@ -5,21 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>物联网设备平台</title>
-    <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
-    <!--<link rel="stylesheet" href="./css/bootstrap.min.css">-->
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      color: #9cb17e;
-      background-color: #e8f3e2;
-    }
-    /*覆写表格的标题头样式*/
-    caption {
-      color: #9cb17e;
-    }
-  </style>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        color: #9cb17e;
+        background-color: #e8f3e2;
+      }
+      /*覆写表格的标题头样式*/
+      caption {
+        color: #9cb17e;
+      }
+    </style>
 
 </head>
 <body>
@@ -86,9 +85,11 @@
       </div>
     </div>
   </div>
-  <script src="./local-resource/js/jquery.min.js"></script>
-  <script src="./local-resource/js/bootstrap.min.js"></script>
-  <script type="text/javascript">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script type="module">
+    import {get_ap_request,set_ap_request} from './js/config.js'
+
     $(function () {
       getData()
     })
@@ -96,35 +97,30 @@
     function getData() {
       const $modal = $(window.parent.document).find('#myModal')
       $(window.parent.document).find(".loader").show();
-      $.ajax({
-        type: "GET",
-        url: "http://10.203.2.27/ap.action",
-        dataType: "json",
-        success: function (data) {
-          $(window.parent.document).find(".loader").hide();
-          console.log(data)
-          if (data.code === 0) {
-            // 渲染数据
-            $("#softAPBroadcastIP").text(data.data.softAPBroadcastIP);
-            $("#softAPgetHostname").text(data.data.softAPgetHostname);
-            $("#softAPgetStationNum").text(data.data.softAPgetStationNum);
-            $("#softAPNetworkID").text(data.data.softAPNetworkID);
-            $("#softAPmacAddress").text(data.data.softAPmacAddress);
-            $("#SSID").text(data.data.SSID);
-            $("#softAPIPv6").text(data.data.softAPIPv6);
-            $("#softAPIP").text(data.data.softAPIP);
-            $("#ap_ssid").val(data.data.ap_ssid);
-            $("#ap_password").val(data.data.ap_password);
-          } else {
-            window.parent.notice($modal,'');
-          }
-        },
-        error: function (data) {
-          $(window.parent.document).find(".loader").show().hide();
-          window.parent.notice($modal,'网络发送异常，请稍后再试');
-          return false;
+      get_ap_request().then(data=>{
+        $(window.parent.document).find(".loader").hide();
+        console.log(data)
+        if (data.code === 0) {
+          // 渲染数据
+          $("#softAPBroadcastIP").text(data.data.softAPBroadcastIP);
+          $("#softAPgetHostname").text(data.data.softAPgetHostname);
+          $("#softAPgetStationNum").text(data.data.softAPgetStationNum);
+          $("#softAPNetworkID").text(data.data.softAPNetworkID);
+          $("#softAPmacAddress").text(data.data.softAPmacAddress);
+          $("#SSID").text(data.data.SSID);
+          $("#softAPIPv6").text(data.data.softAPIPv6);
+          $("#softAPIP").text(data.data.softAPIP);
+          $("#ap_ssid").val(data.data.ap_ssid);
+          $("#ap_password").val(data.data.ap_password);
+        } else {
+          window.parent.notice($modal,'');
         }
-      });
+      }).catch(error=>{
+        $(window.parent.document).find(".loader").show().hide();
+        window.parent.notice($modal,'网络发送异常，请稍后再试');
+        console.log('获取ap数据异常:',error);
+        return false;
+      })
     }
 
     function submitData() {
@@ -137,28 +133,20 @@
       // 提交数据
       const $modal = $(window.parent.document).find('#myModal')
       $(window.parent.document).find(".loader").show();
-      $.ajax({
-        type: "POST",
-        url: "http://10.203.2.27/ap.action",
-        dataType: "json",
-        data: {
-          ssid: ap_ssid,
-          password: ap_password
-        },
-        success: function (data) {
-          $(window.parent.document).find(".loader").hide();
-          console.log(data)
-          if (data.code === 0) {
-            window.parent.notice($modal,'修改成功');
-          } else {
-            window.parent.notice($modal,'修改失败');
-          }
-        },
-        error: function (data) {
-          $(window.parent.document).find(".loader").show().hide();
-          window.parent.notice($modal,'网络发送异常，请稍后再试');
+      set_ap_request({ssid: ap_ssid,password: ap_password}).then(data=>{
+        $(window.parent.document).find(".loader").hide();
+        console.log(data)
+        if (data.code === 0) {
+          window.parent.notice($modal,'修改成功');
+        } else {
+          window.parent.notice($modal,'修改失败');
         }
-      });
+      }).catch(error=>{
+        $(window.parent.document).find(".loader").show().hide();
+        window.parent.notice($modal,'网络发送异常，请稍后再试');
+        console.log('设置ap数据异常:',error);
+        return false;
+      })
     }
 
     function checkData() {

@@ -5,9 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>物联网设备平台</title>
-    <link rel="stylesheet" href="./local-resource/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./local-resource/css/font-awesome.min.css">
-<!--    <link rel="stylesheet" href="./css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
   <style>
     html, body {
       margin: 0;
@@ -71,6 +70,16 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="col-md-8">
         <form class="form-horizontal" role="form">
+          <div class="form-group form-check form-switch">
+            <label>是否开启</label>
+            &nbsp;
+            <input id="flag" type="checkbox">
+          </div>
+          <div class="form-group">
+            <label>Wifi连接状态</label>
+            &nbsp;
+            <input id="status" type="checkbox" disabled="disabled">
+          </div>
           <div class="form-group">
             <label>Wifi名称</label>
             <input type="text" id="sta_ssid" maxlength="16" minlength="4" class="form-control" placeholder="文本输入">
@@ -86,9 +95,10 @@
       </div>
     </div>
   </div>
-<script src="./local-resource/js/jquery.min.js"></script>
-<script src="./local-resource/js/bootstrap.min.js"></script>
-<script type="text/javascript">
+<script src="./js/jquery.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+  <script type="module">
+    import {get_sta_request,set_sta_request} from './js/config.js'
   $(function () {
     getData()
   })
@@ -96,35 +106,37 @@
   function getData() {
     const $modal = $(window.parent.document).find('#myModal')
     $(window.parent.document).find(".loader").show();
-    $.ajax({
-      type: "GET",
-      url: "http://10.203.2.27/sta.action",
-      dataType: "json",
-      success: function (data) {
-        $(window.parent.document).find(".loader").hide();
-        console.log(data)
-        if (data.code === 0) {
-          // 渲染数据
-          $("#localIP").text(data.data.localIP);
-          $("#localIPv6").text(data.data.localIPv6);
-          $("#gatewayIP").text(data.data.gatewayIP);
-          $("#dnsIP").text(data.data.dnsIP);
-          $("#macAddress").text(data.data.macAddress);
-          $("#networkID").text(data.data.networkID);
-          $("#connect_router_flag").text(data.data.connect_router_flag);
-          $("#getHostname").text(data.data.getHostname);
-          $("#sta_ssid").val(data.data.sta_ssid);
-          $("#sta_password").val(data.data.sta_password);
-        } else {
-          window.parent.notice($modal,'获取数据失败，请稍后重试！')
+    get_sta_request().then(data=>{
+      $(window.parent.document).find(".loader").hide();
+      if (data.code === 0) {
+        // 渲染数据
+        $("#localIP").text(data.data.localIP);
+        $("#localIPv6").text(data.data.localIPv6);
+        $("#gatewayIP").text(data.data.gatewayIP);
+        $("#dnsIP").text(data.data.dnsIP);
+        $("#macAddress").text(data.data.macAddress);
+        $("#networkID").text(data.data.networkID);
+        $("#connect_router_flag").text(data.data.connect_router_flag);
+        $("#getHostname").text(data.data.getHostname);
+        $("#sta_ssid").val(data.data.sta_ssid);
+        $("#sta_password").val(data.data.sta_password);
+        const status = data.data.connect_router_flag;
+        if(status){
+          $("#status").prop("checked",true)
         }
-      },
-      error: function (data) {
-        $(window.parent.document).find(".loader").show().hide();
-        window.parent.notice($modal,'网络发送异常，请稍后再试');
-        return false;
+        const flag = data.data.router_connect;
+        if(flag){
+          $("#flag").prop("checked",true)
+        }
+      } else {
+        window.parent.notice($modal,'获取数据失败，请稍后重试！')
       }
-    });
+    }).catch(error=>{
+      $(window.parent.document).find(".loader").show().hide();
+      window.parent.notice($modal,'网络发送异常，请稍后再试');
+      console.log('获取sta数据异常:',error);
+      return false;
+    })
   }
 
   function submitData() {
@@ -134,31 +146,24 @@
     }
     const sta_ssid = $("#sta_ssid").val().trim();
     const sta_password = $("#sta_password").val().trim();
+    const routerFlag = $("#flag").is(":checked");
     // 提交数据
     const $modal = $(window.parent.document).find('#myModal')
     $(window.parent.document).find(".loader").show();
-    $.ajax({
-      type: "POST",
-      url: "http://10.203.2.27/ap.action",
-      dataType: "json",
-      data: {
-        ssid: sta_ssid,
-        password: sta_password
-      },
-      success: function (data) {
-        $(window.parent.document).find(".loader").hide();
-        console.log(data)
-        if (data.code === 0) {
-          window.parent.notice($modal,'修改成功');
-        } else {
-          window.parent.notice($modal,'修改失败');
-        }
-      },
-      error: function (data) {
-        $(window.parent.document).find(".loader").show().hide();
-        window.parent.notice($modal,'网络发送异常，请稍后再试');
+    set_sta_request({ssid: sta_ssid,password: sta_password,flag: true===routerFlag?1:0,})    .then(data=>{
+      $(window.parent.document).find(".loader").hide();
+      console.log(data)
+      if (data.code === 0) {
+        window.parent.notice($modal,'修改成功');
+      } else {
+        window.parent.notice($modal,'修改失败');
       }
-    });
+    }).catch(error=>{
+      $(window.parent.document).find(".loader").show().hide();
+      window.parent.notice($modal,'网络发送异常，请稍后再试');
+      console.log('设置sta异常:',error);
+      return false;
+    })
   }
 
   function checkData() {
