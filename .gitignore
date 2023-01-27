@@ -1,0 +1,4 @@
+.gitattributes
+*.iml
+.idea
+*.DS_Store
