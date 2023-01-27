@@ -30,7 +30,7 @@ export const set_ap_request = (param) => ajax(`${iot_api}/ap.action`,'POST',para
 // 获取采集数据接口（部分机型才有）
 export const get_collect_request = () => ajax(`${iot_api}/collect.action`,'GET', {},'json')
 
-// 获取主页面板疏浚接口
+// 获取主页面板数据接口
 export const get_home_request = () => ajax(`${iot_api}/home.action`,'GET', {},'json')
 
 // 获取led接口
